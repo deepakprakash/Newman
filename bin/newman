@@ -36,7 +36,9 @@ function parseArguments() {
 	  .option('-x, --exitCode', 'Continue running tests even after a failure, but exit with code=1. Incompatible with --stopOnError', null)
 	  .option('-o, --outputFile [file]', 'Path to file where output should be written. [file]', null)
 	  .option('-i, --import [file]', 'Import a Postman backup file, and save collections, environments, and globals. [file] (Incompatible with any other option)', null)
-	  .option('-p, --pretty', 'Enable pretty-print while saving imported collections, environments, and globals');
+      .option('--slave', 'Run newman in slave mode - which will start a server and listen for requests from a newman orchestrator. Please use along with --port option.')
+      .option('--port [number]', 'Port number for slave server to listen on.', null)
+      .option('-p, --pretty', 'Enable pretty-print while saving imported collections, environments, and globals');
 
 	program.on('--help', function() {
 	  console.log('  Newman is a command-line collection runner for Postman.');
@@ -62,6 +64,11 @@ function parseArguments() {
 		Helpers.validateCollectionFile(program.collection);
 	} else if (program.url) {
 		Helpers.validateCollectionUrl(program.url);
+    } else if (program.slave) {
+        // No need for other validations in slave mode.
+        if (!program.port) {
+            Errors.terminateWithError("Please provide a valid port number using the --port option.");
+        }
 	} else {
 		Errors.terminateWithError("Please provide a valid collection file / url to run");
 	}
