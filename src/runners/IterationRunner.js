@@ -195,8 +195,8 @@ var IterationRunner = jsface.Class([Options, EventEmitter], {
             this._runCollection();
             Globals.envJson = currentGlobalEnv;
         } else {
-            this._exportResponses();
-            this.emit('iterationRunnerOver',Globals.exitCode);
+            var exportVariable = this._exportResponses();
+            this.emit('iterationRunnerOver', Globals.exitCode, exportVariable);
         }
     },
 
@@ -209,7 +209,7 @@ var IterationRunner = jsface.Class([Options, EventEmitter], {
     },
 
     _exportResponses: function() {
-        ResponseExporter.exportResults();
+        return ResponseExporter.exportResults();
     },
 
     /**
