@@ -39,6 +39,7 @@ function parseArguments() {
 	  .option('-i, --import [file]', 'Import a Postman backup file, and save collections, environments, and globals. [file] (Incompatible with any other option)', null)
       .option('--slave', 'Run newman in slave mode - which will start a server and listen for requests from a newman orchestrator. Please use along with --port option.')
       .option('--port [number]', 'Port number for slave server to listen on.', null)
+      .option('--hosts [file]', 'Specify a set of hosts for distributed newman run using a supported JSON collection.')
       .option('-p, --pretty', 'Enable pretty-print while saving imported collections, environments, and globals');
 
 	program.on('--help', function() {
@@ -90,6 +91,19 @@ function parseArguments() {
 
     if(program.environment) {
         Helpers.validateEnvironmentFile(program.environment);
+    }
+
+    if (program.hosts) {
+        Helpers.validateHostsFile(program.hosts);
+
+        if (!program.url) {
+            Errors.terminateWithError("The orchestrator mode can be run only with Postman collections using --url option.");
+        }
+
+        if (!program.outputFile) {
+            Errors.terminateWithError("The --outputFile option is mandatory in orchestrator mode.");
+        }
+
     }
 }
 

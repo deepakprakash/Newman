@@ -48,8 +48,14 @@ var Helpers = jsface.Class({
         }
     },
 
-	// transforms an array of 
-	// [{"id": 1, "name":"foo"}, { .. }, ..] 
+    validateHostsFile: function(file) {
+        if (!fs.existsSync(file)) {
+            Errors.terminateWithError("Please specify a valid, existing hosts file.");
+        }
+    },
+
+	// transforms an array of
+	// [{"id": 1, "name":"foo"}, { .. }, ..]
 	// into an object {"key": "id", "value": "foo"}]
 	transformToKeyValue: function(json) {
 		return _und.map(_und.pairs(json), function(pair){
