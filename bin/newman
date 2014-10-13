@@ -16,7 +16,8 @@ var color   = require('cli-color'),
 	Importer = require('../src/utilities/Importer'),
 	Errors  = require('../src/utilities/ErrorHandler'),
 	JSON5   = require('json5'),
-	Newman  = require('../src/Newman');
+    Slave   = require('../src/Slave'),
+    Newman  = require('../src/Newman');
 
 
 function parseArguments() {
@@ -99,6 +100,12 @@ function main() {
 
     if(program.import) {
         //the importer function will print all relevant messages
+        return;
+    }
+
+    if(program.slave) {
+        // Running in slave mode. Start the slave server.
+        Slave.start(program.port);
         return;
     }
 
