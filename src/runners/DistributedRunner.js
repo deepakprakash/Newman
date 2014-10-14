@@ -34,7 +34,7 @@ var DistributedRunner = jsface.Class([Options], {
                 'envJson': that.getOptions().envJson
             };
 
-
+            log.normal('Sending remote run to ' + rUrl + '..\n');
             request.post(rUrl).type('json').send(data).end(function(data) {
 
                 // Increment the completeCount
