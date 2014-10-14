@@ -3,7 +3,7 @@
 /**
  * @Authors Arjun Variar & Prakhar Srivastav.
  * @Purpose Integerates POSTMAN Collection runner/tests with CI systems.
- * 
+ *
  * Main file which parses the command line arguments and runs Newman, Supports JSON5.
  */
 
@@ -17,6 +17,7 @@ var color   = require('cli-color'),
 	Errors  = require('../src/utilities/ErrorHandler'),
 	JSON5   = require('json5'),
     Slave   = require('../src/Slave'),
+    DistributedRunner = require('../src/runners/DistributedRunner'),
     Newman  = require('../src/Newman');
 
 
@@ -109,8 +110,8 @@ function parseArguments() {
 
 function main() {
 	parseArguments();
-	
-	newmanOptions = {};
+
+	var newmanOptions = {};
 
     if(program.import) {
         //the importer function will print all relevant messages
@@ -124,7 +125,7 @@ function main() {
     }
 
 	if (program.environment) {
-		// in case of environment variable set the envJson property 
+		// in case of environment variable set the envJson property
  		// on the options object
         try {
 		    newmanOptions.envJson = JSON5.parse(fs.readFileSync(program.environment, 'utf8'));
@@ -172,7 +173,22 @@ function main() {
 	newmanOptions.noColor = !!program.noColor;
 	newmanOptions.asLibrary = false;
 
-	if (program.collection) {
+    if (program.hosts) {
+        // Distributed/orchestrator mode
+        var hosts = null;
+        try {
+            hosts = JSON5.parse(fs.readFileSync(program.hosts, 'utf8'));
+        }
+        catch (err) {
+            Errors.terminateWithError("The hosts file " + program.hosts + " could not be parsed.");
+        }
+
+        newmanOptions.collectionUrl = program.url;
+
+        var dRunner = new DistributedRunner(hosts, newmanOptions);
+        dRunner.execute();
+
+    } else if (program.collection) {
         var collectionJson;
         try {
 		    // read collection from the filesystem
