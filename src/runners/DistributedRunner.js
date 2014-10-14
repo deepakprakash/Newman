@@ -49,7 +49,7 @@ var DistributedRunner = jsface.Class([Options], {
                     };
                 } else {
                     log.success('Remote run at ' + rUrl + ' succeeded.\n');
-                    host.result = data;
+                    host.result = data.body;
                 }
 
                 if (that.completeCount === that.hosts.length) {
